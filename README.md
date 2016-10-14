@@ -4,14 +4,14 @@ This course is (slightly) out of date.
 
 This repository contains all the information you need to get your code up-to-date. 
 
-The course was built using the final beta for Ionic 2. There were a few key changes when Ionic 2 released the first RC which are documented here. All of the code for the course runs fine if you are using that final beta. The required tweaks are documented below for RC and beyond. Also, Pluralsight Plus subscribers can download a complete code sample of the course which has been updated for the **latest** Ionic 2 release.
+The course was built using the final beta for Ionic 2. There were a few key changes when Ionic 2 released the first RC which are documented here. All of the code for the course runs fine if you are using that final beta. The required tweaks are documented below for RC and beyond. **Also, Pluralsight Plus subscribers can download a complete code sample of the course which has been updated for the latest Ionic 2 release.**
 
 ## Table of Contents
 
 1. [Installation](#installation)
 1. [Project Structure](#project-structure)
 1. [Buttons](#buttons)
-1. [Theme Colors](#colors)
+1. [Theme Colors](#theme-colors)
 1. [Lifecycle Events](#lifecycle-events)
 1. [Incorporating Third-Party Libraries - lodash](#incorporate-lodash)
 1. [Custom CSS](#custom-css)
@@ -142,7 +142,7 @@ Basic usage is shown in the [Storage](https://github.com/driftyco/ionic/blob/mas
 
 ### SQLite
 
-The SqlStorage component was removed between the final Ionic 2 beta and the Ionic 2 RC release. Please see the sql-storage directory for an example of how the implement the `user-settings.service.ts` (shown in the course) using the [Ionic Native SQLite plugin](https://ionicframework.com/docs/v2/native/sqlite/) directly.
+The SqlStorage component was removed between the final Ionic 2 beta and the Ionic 2 RC release. Please see the [sql-storage directory](https://github.com/smichelotti/Ionic2Course/tree/master/sql-storage) for an example of how the implement the `user-settings.service.ts` (shown in the course) using the [Ionic Native SQLite plugin](https://ionicframework.com/docs/v2/native/sqlite/) directly.
 
 
 

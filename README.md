@@ -43,7 +43,42 @@ If there is any doubt, see the [Installing Ionic](https://ionicframework.com/doc
 
 As of the RC release, the project structure is slightly different than what you'll see in the course. With `@NgModule` being introduced, the top level folder for your source code is now called `src` instead of `app`. All of the files related to the root app component (in conjunction with `NgModule`) are now stored in of sub-folder of `src` called `app`. The `assets` directory has also been moved into `src` as a sub-directory.
 
+#### Important Note on NgModule:
 
+Now that the RC release uses `NgModule`, each new page you create must be added the `declarations` and `entryComponents` properties in the `app.module.ts` file. For example:
+
+```
+@NgModule({
+  declarations: [
+    MyApp,
+    GamePage,
+    MapPage,
+    MyTeamsPage,
+    StandingsPage,
+    TeamDetailPage,
+    TeamHomePage,
+    TeamsPage,
+    TournamentsPage
+  ],
+  imports: [
+    IonicModule.forRoot(MyApp)
+  ],
+  bootstrap: [IonicApp],
+  entryComponents: [
+    MyApp,
+    GamePage,
+    MapPage,
+    MyTeamsPage,
+    StandingsPage,
+    TeamDetailPage,
+    TeamHomePage,
+    TeamsPage,
+    TournamentsPage
+  ],
+  providers: []
+})
+export class AppModule {}
+```
 
 ### Buttons
 

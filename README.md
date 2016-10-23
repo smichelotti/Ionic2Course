@@ -2,6 +2,8 @@
 
 This course is (slightly) out of date.
 
+**The latest version of the code (for RC1 release) can be downloaded at [this link here](cdn.stevemichelotti.com/code/elite-schedule-app-rc1.zip).**
+
 This repository contains all the information you need to get your code up-to-date. 
 
 The course was built using the final beta for Ionic 2. There were a few key changes when Ionic 2 released the first RC which are documented here. All of the code for the course runs fine if you are using that final beta. The required tweaks are documented below for RC and beyond. **Also, Pluralsight Plus subscribers can download a complete code sample of the course which has been updated for the latest Ionic 2 release.**

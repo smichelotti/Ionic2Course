@@ -130,6 +130,23 @@ A few Lifecycle Events were renamed. Mostly importantly, `ionViewLoaded` was ren
 
 See [Lifecycle Events Renamed](https://github.com/driftyco/ionic/blob/master/CHANGELOG.md#lifecycle-events-renamed) section of Ionic 2 RC0 change log for more info.
 
+#### Angular 2 HttpModule
+
+Related to Angular 2 (not directly an Ionic change): In a previous version of Angular (i.e., the one used when recording the course), the import statement that was used was:
+
+```
+import { HTTP_PROVIDERS } from '@angular/http';
+```
+
+and specified in the list of `providers`.
+
+This has been changed to:
+
+```
+import { HttpModule } from '@angular/http';
+```
+
+and specified in the list of `imports`.
 
 
 ### Incorporate Lodash

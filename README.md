@@ -2,7 +2,7 @@
 
 This course is (slightly) out of date.
 
-### **The latest version of the code (for RC4 release) can be downloaded at [this link here](http://cdn.stevemichelotti.com/code/elite-schedule-app-rc4.zip).**
+### **The latest version of the code (for 2.0.0 final release) can be downloaded at [this link here](http://cdn.stevemichelotti.com/code/elite-schedule-app-2.0final.zip).**
 
 This repository contains all the information you need to get your code up-to-date. 
 

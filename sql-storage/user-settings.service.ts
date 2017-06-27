@@ -68,7 +68,7 @@ export class UserSettingsService {
             }
             return this.db.executeSql(`
               SELECT * FROM favorites
-              WHERE id = CAST(? AS INTEGER)
+              WHERE id = ?
             `, [teamId])
                 .then(
                     value => value.rows.length
@@ -97,6 +97,7 @@ export class UserSettingsService {
                             items.push(JSON.parse(vals.rows.item(i).data));
                         }
                         this.items = items;
+                        return this.items
                     }
                 )
                 .catch(

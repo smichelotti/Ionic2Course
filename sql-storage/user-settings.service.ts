@@ -1,84 +1,160 @@
-import { Injectable } from '@angular/core';
-import { Events } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
-import { SQLite } from 'ionic-native';
-import { SqlStorage } from './shared';
-
-const win: any = window;
+import {Injectable} from "@angular/core";
+import {Storage} from "@ionic/storage";
+import {Events} from "ionic-angular";
+import { SQLite, SQLiteObject, SQLiteDatabaseConfig } from "@ionic-native/sqlite";
 
 @Injectable()
-export class UserSettings {
-    //storage = new Storage(SqlStorage);
-    public db: SQLite;
-    public sql: SqlStorage;
-
-    constructor(public events: Events, public storage: Storage) {
-        if (win.sqlitePlugin) {
-            this.sql = new SqlStorage();
-        } else {
-            console.warn('SQLite plugin not installed. Falling back to regular Ionic Storage.');
-        }
+export class UserSettingsService {
+    private sqliteAvailable: boolean = false;
+    private db: SQLiteObject;
+    items = [];
+    constructor(private storage: Storage, public events: Events, private sqlite: SQLite) {
+        this.testStorage(true);
     }
 
     favoriteTeam(team, tournamentId, tournamentName) {
         let item = { team: team, tournamentId: tournamentId, tournamentName: tournamentName };
-
-        if (this.sql){
-            this.sql.set(team.id.toString(), JSON.stringify(item)).then(data => {
-                this.events.publish('favorites:changed');
-            });
+        if (this.sqliteAvailable) {
+            if (!this.db) {
+                return this.initStorage();
+            }
+            return this.db.executeSql(`
+              INSERT INTO favorites
+              VALUES (?, ?)
+            `, [team.id, JSON.stringify(item)])
+                .then(
+                    vals => {
+                        this.events.publish('favorites:changed')
+                    }
+                )
+                .catch(
+                    err => console.error(err)
+                )
         } else {
-            return new Promise(resolve => {
-                this.storage.set(team.id.toString(), JSON.stringify(item)).then(() => {
-                    this.events.publish('favorites:changed');
-                    resolve();
-                });
-            });
+            this.storage.set(team.id, JSON.stringify(item))
+                .then(
+                    () => this.events.publish('favorites:changed')
+                );
         }
     }
 
     unfavoriteTeam(team) {
-        if (this.sql){
-            this.sql.remove(team.id.toString()).then(data => {
-                this.events.publish('favorites:changed');
-            });
+        if (this.sqliteAvailable) {
+            if (!this.db) {
+                return this.initStorage();
+            }
+            this.db.executeSql(`
+              DELETE FROM favorites
+              WHERE id = ?
+            `, [team.id])
+                .then(
+                    () => this.events.publish('favorites:changed')
+                )
+                .catch(
+                    err => console.error(err)
+                );
         } else {
-            return new Promise(resolve => {
-                this.storage.remove(team.id.toString()).then(() => {
-                    this.events.publish('favorites:changed');
-                    resolve();
-                });
-            });
+            this.storage.remove(team.id)
+                .then(
+                    () => this.events.publish('favorites:changed')
+                );
         }
     }
 
     isFavoriteTeam(teamId) {
-        if (this.sql){
-            return this.sql.get(teamId.toString()).then(value => value ? true : false);
+        if (this.sqliteAvailable) {
+            if (!this.db) {
+                this.initStorage();
+            }
+            return this.db.executeSql(`
+              SELECT * FROM favorites
+              WHERE id = ?
+            `, [teamId])
+                .then(
+                    value => value.rows.length
+                )
+                .catch(
+                    err => console.error(err)
+                );
         } else {
-            return new Promise(resolve => resolve(this.storage.get(teamId.toString()).then(value => value ? true : false)));
+            return this.storage.get(teamId)
+                .then(
+                    value => !!value
+                );
         }
     }
 
-    getAllFavorites(){
-        if (this.sql){
-            return this.sql.getAll();
+    getAllFavorites() {
+        if (this.sqliteAvailable) {
+            if (!this.db) {
+                this.initStorage()
+            }
+            return this.db.executeSql(`SELECT * FROM favorites`, {})
+                .then(
+                    vals => {
+                        let items = [];
+                        for (let i = 0; i < vals.rows.length; i++) {
+                            items.push(JSON.parse(vals.rows.item(i).data));
+                        }
+                        this.items = items;
+                        return this.items
+                    }
+                )
+                .catch(
+                    err => console.error(err)
+                );
         } else {
-            return new Promise(resolve => {
-                let results = [];
-                this.storage.forEach(data => {
-                    results.push(JSON.parse(data));
-                });
-                return resolve(results);
-            });
+            let items = [];
+            return this.storage.forEach(val => {
+                items.push(JSON.parse(val));
+            })
+                .then(
+                    () => this.items = items
+                );
         }
     }
 
-    initStorage(){
-        if (this.sql){
-            return this.sql.initializeDatabase();
-        } else {
-            return new Promise(resolve => resolve());
-        }
+    testStorage(init: boolean = false) {
+        return this.sqlite.echoTest()
+            .then(
+                () => {
+                    this.sqliteAvailable = true;
+                    if (init) {
+                        this.initStorage();
+                    }
+                }
+            )
+            .catch(
+                err => console.error(err)
+            );
+    }
+
+    private initStorage() {
+        let dbConfig: SQLiteDatabaseConfig = {
+            name: 'data.db',
+            location: 'default'
+        };
+        this.sqlite.create(dbConfig)
+            .then(
+                (db: SQLiteObject) => {
+                    this.db = db;
+                    this.db.executeSql(`
+                      CREATE TABLE IF NOT EXISTS favorites
+                      (
+                        id    INTEGER   UNIQUE PRIMARY KEY,
+                        data  TEXT
+                      )
+                    `, {})
+                        .then(
+                            () => console.log('DB and table initialized')
+                        )
+                        .catch(
+                            err => console.error(err)
+                        )
+                }
+            )
+            .catch(
+                err => console.error(err)
+            );
     }
 }
